@@ -1,0 +1,121 @@
+repositories:
+  # core
+  core/autoware_msgs:
+    type: git
+    url: https://github.com/autowarefoundation/autoware_msgs.git
+    version: 9de9a00b7034be2519c8b3257a4c4ee9e8eba087
+  core/autoware_adapi_msgs:
+    type: git
+    url: https://github.com/autowarefoundation/autoware_adapi_msgs.git
+    version: 7cd80335ad1a4edc1955de5062dd5a4bd9d4de7b
+  core/common:
+    type: git
+    url: https://github.com/tier4/autoware_common.git
+    version: s1/v2023.10.1
+  core/external/autoware_auto_msgs: # TODO(mfc): Remove when autoware_msgs is merged
+    type: git
+    url: https://github.com/tier4/autoware_auto_msgs.git
+    version: e1795354161ed54d66659366262578863bd2b862
+
+  # universe
+  universe/autoware.universe:
+    type: git
+    url: https://github.com/tier4/autoware.universe.git
+    version: v0.9.2
+  universe/external/tier4_ad_api_adaptor: # TODO(TIER IV): Improve design/code and transfer to AWF
+    type: git
+    url: https://github.com/tier4/tier4_ad_api_adaptor.git
+    version: a58468edcdaf8698153c85e93fe23807edcb8187
+  universe/external/tier4_autoware_msgs:
+    type: git
+    url: https://github.com/tier4/tier4_autoware_msgs.git
+    version: fbc4871a7756bab7a99ba5ee0bd009861f2c67f3
+  universe/external/morai_msgs:
+    type: git
+    url: https://github.com/MORAI-Autonomous/MORAI-ROS2_morai_msgs.git
+    version: 860aaadea5dcaabd5a2272c244eea51265363740
+  universe/external/muSSP:
+    type: git
+    url: https://github.com/tier4/muSSP.git
+    version: c79e98fd5e658f4f90c06d93472faa977bc873b9
+  universe/external/ndt_omp:
+    type: git
+    url: https://github.com/tier4/ndt_omp.git
+    version: 9a0877ac99cf873d9e984e4f1c485e537503fb7f
+  universe/external/pointcloud_to_laserscan:
+    type: git
+    url: https://github.com/tier4/pointcloud_to_laserscan.git
+    version: 8057177eeb26a3fd29b6e363e8a9a90d5daf391b
+  universe/external/eagleye:
+    type: git
+    url: https://github.com/MapIV/eagleye.git
+    version: 30bae75dace6d9bfed0d67d51d6eec5928932509
+  universe/external/rtklib_ros_bridge:
+    type: git
+    url: https://github.com/MapIV/rtklib_ros_bridge.git
+    version: ef094407bba4f475a8032972e0c60cbb939b51b8
+  universe/external/llh_converter:
+    type: git
+    url: https://github.com/MapIV/llh_converter.git
+    version: 07ad112b4f6b83eccd3a5f777bbe40ff01c67382
+
+  # launcher
+  launcher/autoware_launch:
+    type: git
+    url: https://github.com/tier4/autoware_launch.sample_mobile_robot.git
+    version: beta/v0.9.2
+
+  # sensor_component
+  sensor_component/external/sensor_component_description:
+    type: git
+    url: https://github.com/tier4/sensor_component_description.git
+    version: a6a628186b124bc1af73c4f48a6dcd4b441391d3
+  sensor_component/external/tamagawa_imu_driver:
+    type: git
+    url: https://github.com/tier4/tamagawa_imu_driver.git
+    version: ros2
+  sensor_component/external/nebula:
+    type: git
+    url: https://github.com/tier4/nebula.git
+    version: 45c01cf48cbdba3696f1e40a68726af50b67ba19
+  sensor_component/external/transport_drivers:
+    type: git
+    url: https://github.com/MapIV/transport_drivers.git
+    version: cb7cfcb7b8e2071bc97fc601ba8598b2f7130d24
+
+  # sensor_kit
+  autoware/aip_launcher:
+    type: git
+    url: https://github.com/tier4/aip_launcher.git
+    version: 3850a5c974c3138c7e97bb5fbad68c4f831f8461
+  autoware/sample_mobile_robot_sensor_launch:
+    type: git
+    url: https://github.com/tier4/sample_mobile_robot_sensor_launch.git
+    version: a294e1d5539ace3c264ba193bf85d341b0206873
+
+  # vehicle
+  vendor/lsdb_interface:
+    type: git
+    url: git@github.com:tier4/lsdb_interface.git
+    version: main
+  vehicle/dio_ros_driver:
+    type: git
+    url: git@github.com:tier4/dio_ros_driver.git
+    version: f3634748746c8293de190270ddfbf5d1a7f46747
+  vehicle/sample_mobile_robot_launch:
+    type: git
+    url: https://github.com/tier4/sample_mobile_robot_launch.git
+    version: 35519622c574ca88d516364ad7a89773b64d4980
+
+  # param
+  param/individual_params:
+    type: git
+    url: https://github.com/tier4/autoware_individual_params.sample_mobile_robot.git
+    version: 90ec774eafa25ffacf14a4e876bbc07436369278
+
+  # others
+  rclcpp: # for temporally fix https://github.com/ros2/rclcpp/issues/2163
+    type: git
+    url: https://github.com/tier4/rclcpp.git
+    # This old version is not directly related to the issue, but it is stable.
+    version: 0189b7c2146e558218b8f0775d8e006cd062787d
