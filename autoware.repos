@@ -121,6 +121,10 @@ repositories:
     type: git
     url: https://github.com/autowarefoundation/single_lidar_sensor_kit_launch.git
     version: 0.39.0
+  sensor_kit/aip_launcher:
+    type: git
+    url: https://github.com/tier4/aip_launcher.git
+    version: tier4/universe
   sensor_kit/sample_mobile_robot_sensor_launch:
     type: git
     url: https://github.com/tier4/sample_mobile_robot_sensor_launch.git
