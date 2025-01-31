@@ -82,6 +82,10 @@ repositories:
     url: https://github.com/tier4/autoware_launch.sample_mobile_robot.git
     version: beta/v0.39.0
   # sensor_component
+  sensor_component/dio_ros_driver:
+    type: git
+    url:  https://github.com/tier4/dio_ros_driver.git
+    version: develop/ros2
   sensor_component/external/sensor_component_description:
     type: git
     url: https://github.com/tier4/sensor_component_description.git
@@ -105,10 +109,10 @@ repositories:
     url: https://github.com/autowarefoundation/ros2_socketcan
     version: main
   # sensor_kit
-  sensor_kit/sample_sensor_kit_launch:
-    type: git
-    url: https://github.com/autowarefoundation/sample_sensor_kit_launch.git
-    version: 0.39.0
+  # sensor_kit/sample_sensor_kit_launch:
+  #   type: git
+  #   url: https://github.com/autowarefoundation/sample_sensor_kit_launch.git
+  #   version: 0.39.0
   sensor_kit/external/awsim_sensor_kit_launch: # TODO: Integrate into sample_sensor_kit_launch
     type: git
     url: https://github.com/tier4/awsim_sensor_kit_launch.git
@@ -124,7 +128,7 @@ repositories:
   sensor_kit/aip_launcher:
     type: git
     url: https://github.com/tier4/aip_launcher.git
-    version: tier4/universe
+    version: cd07852a6f4ce7eeebe625f5f9eb82f98c3d1aa5
   sensor_kit/sample_mobile_robot_sensor_launch:
     type: git
     url: https://github.com/tier4/sample_mobile_robot_sensor_launch.git
@@ -146,7 +150,7 @@ repositories:
     type: git
     url: https://github.com/tier4/pacmod_interface.git
     version: main
-  vehicle/externallsdb_interface:
+  vehicle/external/lsdb_interface:
     type: git
     url:  https://github.com/tier4/lsdb_interface.git
     version: main
