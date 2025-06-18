@@ -133,10 +133,6 @@ repositories:
     type: git
     url: https://github.com/tier4/aip_launcher.git
     version: cd07852a6f4ce7eeebe625f5f9eb82f98c3d1aa5
-  sensor_kit/sample_mobile_robot_sensor_launch:
-    type: git
-    url: https://github.com/tier4/sample_mobile_robot_sensor_launch.git
-    version: main
   # vehicle
   vehicle/sample_vehicle_launch:
     type: git
@@ -146,20 +142,19 @@ repositories:
     type: git
     url: https://github.com/autowarefoundation/awsim_labs_vehicle_launch.git
     version: main
-  vehicle/sample_mobile_robot_launch:
-    type: git
-    url: https://github.com/tier4/sample_mobile_robot_launch.git
-    version: main
   vehicle/external/pacmod_interface:
     type: git
     url: https://github.com/tier4/pacmod_interface.git
     version: main
-  vehicle/external/lsdb_interface:
+  vehicle/external/ros2_whill
     type: git
-    url:  https://github.com/tier4/lsdb_interface.git
-    version: main
-  # param
-  param/autoware_individual_params:
+    url: https://github.com/whill-labs/ros2_whill.git
+    version: humble
+  vehicle/external/ros2_whill_interface
     type: git
-    url: https://github.com/tier4/autoware_individual_params.sample_mobile_robot.git
+    url: https://github.com/whill-labs/ros2_whill_interface.git
+    version: humble
+  vehicle/external/autoware_ros2_whill_adapter:
+    type: git
+    url:  git@github.com:tier4/autoware_ros2_whill_adapter.git
     version: main
