@@ -150,9 +150,9 @@ repositories:
     type: git
     url: https://github.com/whill-labs/ros2_whill.git
     version: humble
-  vehicle/external/ros2_whill_interface:
+  vehicle/external/ros2_whill_interfaces:
     type: git
-    url: https://github.com/whill-labs/ros2_whill_interface.git
+    url: https://github.com/whill-labs/ros2_whill_interfaces.git
     version: humble
   vehicle/external/autoware_ros2_whill_adapter:
     type: git
