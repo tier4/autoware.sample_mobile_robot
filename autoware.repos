@@ -158,3 +158,8 @@ repositories:
     type: git
     url:  git@github.com:tier4/autoware_ros2_whill_adapter.git
     version: main
+  # param
+  param/autoware_individual_params:
+    type: git
+    url: https://github.com/tier4/autoware_individual_params.git
+    version: main
