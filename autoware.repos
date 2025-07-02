@@ -90,6 +90,10 @@ repositories:
     type: git
     url:  https://github.com/tier4/dio_ros_driver.git
     version: develop/ros2
+  sensor_component/external/gscam:
+    type: git
+    url: https://github.com/tier4/gscam.git
+    version: ros2
   sensor_component/external/sensor_component_description:
     type: git
     url: https://github.com/tier4/sensor_component_description.git
