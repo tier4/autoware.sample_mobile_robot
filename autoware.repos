@@ -30,9 +30,8 @@ repositories:
   #  version: awf-latest
   autoware/launcher:
     type: git
-    url: git@github.com:tier4/autoware_launch.s1.git
-    #version: 5200e1aa370f118b2cda1783e4cc17fcd6e45232
-    version: develop/jsasaki/awf-latest/build
+    url: https://github.com/tier4/autoware_launch.sample_mobile_robot.git
+    version: beta/v0.39.0
   autoware/aip_launcher:
     type: git
     url: https://github.com/tier4/aip_launcher.git
