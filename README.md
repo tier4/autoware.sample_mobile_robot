@@ -2,17 +2,23 @@
 
 ## About this repository
 
+This is an Autoware repository adjusted for mobile robots, and we hope it will be helpful for research and development and learning.
+In addition to the repository configuration, we will also introduce the configuration of the mobile robot we targeted.
+
 ## Vehicle overview
-![Vehicle overview](docs/overview.png)
+![Vehicle overview](docs/vehicle_overview.png)
 
 ### Vehicle configuration
-- Base vehicle: [WHILL Powered Mobility Platform](https://whill-mrp.notion.site/WHILL-f975baf4015e4eebbb243a7d331efb0a)
-- ECU: [ADLINK AVA-3510](https://www.adlinktech.com/products/automotive-computing/autonomous-driving/ava-3510?lang=ja)
+
+![Connection diagram](docs/connection_diagram.png)
+
+- Base vehicle: [WHILL Powered Mobility Platform](https://whill-mrp.notion.site/WHILL-Mobile-Robot-Platform-97930066f5f64529bb83883aafef0c3b)
+- Autoware ECU: [ADLINK AVA-3510](https://www.adlinktech.com/products/automotive-computing/autonomous-driving/ava-3510?lang=en)
 - Sensors
   - Lidar: [Hesai XT32](https://www.hesaitech.com/product/xt16-32-32m/)
   - Camera: [TIER IV C1 camera](https://edge.auto/automotive-camera/#C1)
     - Using [GMSL2-10GbE conversion module](https://edge.auto/automotive-camera/#GMSL2-10GbE)
-  - IMU: [Tamagawa AU7684](https://mems.tamagawa-seiki.com/product/memsimu.html#p03)
+  - IMU: [Tamagawa AU7684](https://mems.tamagawa-seiki.com/en/product/memsimu.html#p03)
 
 ## Repository overview
 - [autoware.sample_mobile_robot](https://github.com/tier4/autoware.sample_mobile_robot)
@@ -22,11 +28,12 @@
   - Including sensor and vehicle launcher.
 - External Repositories
   - [ros2_whill](https://github.com/whill-labs/ros2_whill), [ros2_whill_interfaces](https://github.com/whill-labs/ros2_whill_interfaces)
-    - Serial communication to ROS2 message conversion of WHILL vehicle.
+    - Serial communication to ROS2 message conversion of WHILL platform.
   - [autoware_ros2_whill_adapter](https://github.com/tier4/autoware_ros2_whill_adapter)
-    - Adapter for connecting autoware and ros2_whill
-  - [gmsl](https://github.com/tetsuya-t4/gmsl/tree/feature/custom_timestamp)
-    - Camera driver using GMSL-10GbE conversion module
+    - Adapter for connecting autoware and ros2_whill.
+  - [gmsl](https://github.com/analogdevicesinc/gmsl/tree/ros_rtp)
+    - Camera driver using GMSL-10GbE conversion module.
+    - [This PR](https://github.com/analogdevicesinc/gmsl/pull/7) is needed to enable custom timestamps.
 
 ## How to setup
 
@@ -45,6 +52,7 @@ Please refer to the [Autoware Documentation](https://autowarefoundation.github.i
 
 #### Sensors calibration
 Please refer to the Autoware documentation to perform the required sensor calibration.
+- [Ground-Lidar calibration](https://autowarefoundation.github.io/autoware-documentation/main/how-to-guides/integrating-autoware/creating-vehicle-and-sensor-model/calibrating-sensors/ground-lidar-calibration/)
 - [Intrinsic camera calibration](https://autowarefoundation.github.io/autoware-documentation/main/how-to-guides/integrating-autoware/creating-vehicle-and-sensor-model/calibrating-sensors/intrinsic-camera-calibration/)
 - [Lidar-Camera calibration](https://autowarefoundation.github.io/autoware-documentation/main/how-to-guides/integrating-autoware/creating-vehicle-and-sensor-model/calibrating-sensors/lidar-camera-calibration/)
 
