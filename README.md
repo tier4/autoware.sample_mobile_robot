@@ -10,7 +10,7 @@ In addition to the repository configuration, we will also introduce the configur
 
 ### Vehicle configuration
 
-![Connection diagram](docs/connection_diagram.png)
+![Simplified connection diagram](docs/simplified_connection_diagram.png)
 
 - Base vehicle: [WHILL Powered Mobility Platform](https://whill-mrp.notion.site/WHILL-Mobile-Robot-Platform-97930066f5f64529bb83883aafef0c3b)
 - Autoware ECU: [ADLINK AVA-3510](https://www.adlinktech.com/products/automotive-computing/autonomous-driving/ava-3510?lang=en)
@@ -19,6 +19,10 @@ In addition to the repository configuration, we will also introduce the configur
   - Camera: [TIER IV C1 camera](https://edge.auto/automotive-camera/#C1)
     - Using [GMSL2-10GbE conversion module](https://edge.auto/automotive-camera/#GMSL2-10GbE)
   - IMU: [Tamagawa AU7684](https://mems.tamagawa-seiki.com/en/product/memsimu.html#p03)
+
+For more details on wiring and components, please refer to these document.
+- [Connection Diagram](docs/Connection%20Diagram.pdf)
+- [Electrical System Parts List](docs/Electrical%20System%20Parts%20List.pdf)
 
 ## Repository overview
 - [autoware.sample_mobile_robot](https://github.com/tier4/autoware.sample_mobile_robot)
@@ -45,10 +49,11 @@ Please refer to the [Autoware Documentation](https://autowarefoundation.github.i
 #### Sensors connection
 - Lidar
   - Please refer to the manual for the Lidar you are using to set the IP address etc.
+  - Launch file is [here](https://github.com/tier4/autoware_launch.sample_mobile_robot/blob/6685ab2ece58dfbbda19cb1f7e222526ff775a52/sensor_kit/whill_sensor_kit_launch/whill_sensor_kit_launch/launch/lidar.launch.xml).
 - Camera
-  - See the [Edge.Auto Documentation](https://tier4.github.io/edge-auto-docs/getting_started/gmsl-10g/gmsl-10g_getting_started_guide.html)
+  - See the [GMSL-10GbE Conversion Module Getting Started Guide](https://tier4.github.io/edge-auto-docs/getting_started/gmsl-10g/gmsl-10g_getting_started_guide.html) if you use.
 - IMU
-  - Set the name of the device port to which the IMU is connected.
+  - Set the name of the device port to which the IMU is connected [here](https://github.com/tier4/autoware_launch.sample_mobile_robot/blob/6685ab2ece58dfbbda19cb1f7e222526ff775a52/sensor_kit/whill_sensor_kit_launch/whill_sensor_kit_launch/launch/imu.launch.xml#L3).
 
 #### Sensors calibration
 Please refer to the Autoware documentation to perform the required sensor calibration.
