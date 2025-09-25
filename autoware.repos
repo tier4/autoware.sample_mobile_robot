@@ -31,7 +31,7 @@ repositories:
   autoware/launcher:
     type: git
     url: https://github.com/tier4/autoware_launch.sample_mobile_robot.git
-    version: beta/v0.39.0
+    version: upstream/autoware/latest
   autoware/aip_launcher:
     type: git
     url: https://github.com/tier4/aip_launcher.git
@@ -119,10 +119,6 @@ repositories:
     type: git
     url: https://github.com/tier4/glog.git
     version: ea36766fdc2ac8e8c8e3ac988ae69acd6d09bb30
-  vendor/autoware_logging_suite:
-    type: git
-    url: git@github.com:tier4/autoware_logging_suite.git
-    version: v0.7.0
   rclcpp: # Based stable version, the fix-patch for service in initialization and the glog feature is added
     type: git
     url: https://github.com/tier4/rclcpp.git
