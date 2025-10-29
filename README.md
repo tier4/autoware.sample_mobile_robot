@@ -20,7 +20,8 @@ In addition to the repository configuration, we will also introduce the configur
     - Using [GMSL2-10GbE conversion module](https://edge.auto/automotive-camera/#GMSL2-10GbE)
   - IMU: [Tamagawa AU7684](https://mems.tamagawa-seiki.com/en/product/memsimu.html#p03)
 
-For more details on wiring and components, please refer to these document.
+For more details on mechanical design, wiring and components, please refer to the following documents.
+- [Robot Assembly Model (STEP)](docs/assembly.STEP)
 - [Connection Diagram](docs/Connection%20Diagram.pdf)
 - [Electrical System Parts List](docs/Electrical%20System%20Parts%20List.pdf)
 
