@@ -40,6 +40,10 @@ repositories:
     version: upstream/autoware_core/main
 
   # sensor_component
+  sensor_component/external/sensor_component_description:
+    type: git
+    url: https://github.com/tier4/sensor_component_description.git
+    version: 03ba094851ec90febfcfc0adb20b64b0e19df7a8
   sensor_component/dio_ros_driver:
     type: git
     url:  https://github.com/tier4/dio_ros_driver.git
