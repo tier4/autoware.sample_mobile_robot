@@ -57,10 +57,10 @@ Please refer to the [Autoware Documentation](https://autowarefoundation.github.i
 
 #### Sensors calibration
 Please refer to the Autoware documentation to perform the required sensor calibration.
-- [Ground-Lidar calibration](https://autowarefoundation.github.io/autoware-documentation/main/how-to-guides/integrating-autoware/creating-vehicle-and-sensor-model/calibrating-sensors/ground-lidar-calibration/)
-- [Intrinsic camera calibration](https://autowarefoundation.github.io/autoware-documentation/main/how-to-guides/integrating-autoware/creating-vehicle-and-sensor-model/calibrating-sensors/intrinsic-camera-calibration/)
-- [Lidar-Camera calibration](https://autowarefoundation.github.io/autoware-documentation/main/how-to-guides/integrating-autoware/creating-vehicle-and-sensor-model/calibrating-sensors/lidar-camera-calibration/)
+- [Ground-Lidar calibration](https://autowarefoundation.github.io/autoware-documentation/main/tutorials/integrating-autoware/creating-vehicle-and-sensor-model/calibrating-sensors/ground-lidar-calibration/)
+- [Intrinsic camera calibration](https://autowarefoundation.github.io/autoware-documentation/main/tutorials/integrating-autoware/creating-vehicle-and-sensor-model/calibrating-sensors/intrinsic-camera-calibration/)
+- [Lidar-Camera calibration](https://autowarefoundation.github.io/autoware-documentation/main/tutorials/integrating-autoware/creating-vehicle-and-sensor-model/calibrating-sensors/lidar-camera-calibration/)
 
 #### Lidar-Camera synchronization
-Below is an excerpt from the [Autoware Documentation](https://autowarefoundation.github.io/autoware-documentation/main/how-to-guides/integrating-autoware/integrating-sensors/integrating-cameras/#time-synchronization):
+Below is an excerpt from the [Autoware Documentation](https://autowarefoundation.github.io/autoware-documentation/main/tutorials/integrating-autoware/integrating-sensors/integrating-cameras/#time-synchronization):
 > Although time synchronization is recommended for achieving the best performance across varying speed conditions, it could be omitted in cases where strict control of capture timing is not crucial.
