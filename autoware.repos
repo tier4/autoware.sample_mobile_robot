@@ -2,62 +2,30 @@ repositories:
   # autoware
   autoware/core:
     type: git
-    url: https://github.com/sasakisasaki/autoware.core.git
-    version: experimental/s1/core-only
-  autoware/autoware_utils:
-    type: git
-    url: https://github.com/autowarefoundation/autoware_utils.git
+    url: https://github.com/autowarefoundation/autoware_core.git
     version: main
   autoware/tier4_autoware_msgs:
     type: git
     url: https://github.com/tier4/tier4_autoware_msgs.git
     version: tier4/universe
-  core/autoware_msgs:
-    type: git
-    url: https://github.com/autowarefoundation/autoware_msgs.git
-    version: 1.9.0
-  core/autoware_cmake:
-    type: git
-    url: https://github.com/autowarefoundation/autoware_cmake.git
-    version: 1.1.0
-  autoware/autoware_internal_msgs:
-    type: git
-    url: https://github.com/autowarefoundation/autoware_internal_msgs.git
-    version: main
   autoware/autoware_lanelet2_extension:
     type: git
     url: https://github.com/autowarefoundation/autoware_lanelet2_extension.git
     version: main
+  autoware/autoware_simple_planning_simulator:
+    type: git
+    url: https://github.com/autowarefoundation/autoware_simple_planning_simulator.git
+    version: separate-planning-simulator-dependency-from-autoware-universe
   vendor/tamagawa_imu_driver:
     type: git
     url: https://github.com/tier4/tamagawa_imu_driver.git
     version: de4bf6be79aa2968cf2f62e0ebe1ff8a5797e6ad
 
   # Including sensor launch
-  autoware/launcher:
+  autoware/whill_launcher:
     type: git
     url: https://github.com/tier4/autoware_launch.sample_mobile_robot.git
     version: upstream/autoware_core/main
-
-  # sensor_component
-  sensor_component/external/sensor_component_description:
-    type: git
-    url: https://github.com/tier4/sensor_component_description.git
-    version: 03ba094851ec90febfcfc0adb20b64b0e19df7a8
-  sensor_component/dio_ros_driver:
-    type: git
-    url:  https://github.com/tier4/dio_ros_driver.git
-    version: develop/ros2
-  sensor_component/external/gscam:
-    type: git
-    url: https://github.com/tier4/gscam.git
-    version: ros2
-
-  # Continental compatible version of ROS 2 socket CAN
-  sensor_component/ros2_socketcan:
-    type: git
-    url: https://github.com/autowarefoundation/ros2_socketcan
-    version: main
 
   # Whill
   vehicle/external/ros2_whill:
@@ -72,9 +40,3 @@ repositories:
     type: git
     url:  git@github.com:tier4/autoware_ros2_whill_adapter.git
     version: upstream/autoware/latest
-
-  # param
-  param/autoware_individual_params:
-    type: git
-    url: https://github.com/tier4/autoware_individual_params.git
-    version: main

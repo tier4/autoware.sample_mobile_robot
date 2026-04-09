@@ -1,0 +1,345 @@
+diff --git a/autoware_core/launch/autoware_core.launch.xml b/autoware_core/launch/autoware_core.launch.xml
+index f78c6ebb..3eadb4a8 100644
+--- a/autoware_core/launch/autoware_core.launch.xml
++++ b/autoware_core/launch/autoware_core.launch.xml
+@@ -7,6 +7,7 @@
+   <arg name="use_sim_time" default="false" description="use_sim_time"/>
+   <arg name="vehicle_model" description="vehicle model name"/>
+   <arg name="sensor_model" description="sensor model name"/>
++  <arg name="pointcloud_container_name" default="pointcloud_container"/>
+ 
+   <!-- Optional parameters -->
+   <!-- Modules to be launched -->
+@@ -19,11 +20,15 @@
+   <arg name="launch_vehicle" default="true" description="launch vehicle"/>
+   <arg name="launch_api" default="true" description="launch api"/>
+ 
++  <!-- Configure if this is planning simulator -->
++  <arg name="is_planning_simulation" default="false" description="enable planning simulation if true (default is false)"/>
++
+   <!-- Global parameters -->
+   <group scoped="false">
+     <include file="$(find-pkg-share autoware_global_parameter_loader)/launch/global_params.launch.py">
+       <arg name="use_sim_time" value="$(var use_sim_time)"/>
+       <arg name="vehicle_model" value="$(var vehicle_model)"/>
++      <arg name="is_planning_simulation" value="$(var is_planning_simulation)"/>
+     </include>
+   </group>
+ 
+@@ -39,12 +44,18 @@
+ 
+   <!-- Sensing -->
+   <group if="$(var launch_sensing)">
+-    <include file="$(find-pkg-share autoware_core_sensing)/launch/autoware_core_sensing.launch.xml"/>
++    <include file="$(find-pkg-share autoware_core_sensing)/launch/autoware_core_sensing.launch.xml">
++      <arg name="is_planning_simulation" value="$(var is_planning_simulation)"/>
++      <arg name="sensor_model" value="$(var sensor_model)"/>
++      <arg name="pointcloud_container_name" value="$(var pointcloud_container_name)"/>
++    </include>
+   </group>
+ 
+   <!-- Localization -->
+   <group if="$(var launch_localization)">
+-    <include file="$(find-pkg-share autoware_core_localization)/launch/autoware_core_localization.launch.xml"/>
++    <include file="$(find-pkg-share autoware_core_localization)/launch/autoware_core_localization.launch.xml">
++      <arg name="is_planning_simulation" value="$(var is_planning_simulation)"/>
++    </include>
+   </group>
+ 
+   <!-- Perception -->
+@@ -66,6 +77,7 @@
+     <include file="$(find-pkg-share autoware_core_vehicle)/launch/autoware_core_vehicle.launch.xml">
+       <arg name="vehicle_model" value="$(var vehicle_model)"/>
+       <arg name="sensor_model" value="$(var sensor_model)"/>
++      <arg name="is_planning_simulation" value="$(var is_planning_simulation)"/>
+     </include>
+   </group>
+ 
+@@ -73,6 +85,46 @@
+     <include file="$(find-pkg-share autoware_core_api)/launch/autoware_core_api.launch.xml"/>
+   </group>
+ 
++  <group if="$(var is_planning_simulation)">
++    <arg
++      name="localization_sim_mode"
++      default="api"
++      description="Select localization mode. Options are 'none', 'api' or 'pose_twist_estimator'. 'pose_twist_estimator' starts most of the localization modules except for the ndt_scan_matcher. 'api' starts an external API for initial position estimation. 'none' does not start any localization-related process."
++    />
++
++    <arg name="simulator_model" default="$(find-pkg-share $(var vehicle_model)_description)/config/simulator_model.param.yaml" description="path to the file of simulator model"/>
++    <!-- 'pose_only' mode publishes the pose topic as an alternative to ndt_localizer. 'full_motion' mode publishes the odometry and acceleration topics as an alternative to localization modules. -->
++    <let name="motion_publish_mode" value="pose_only" if="$(eval '&quot;$(var localization_sim_mode)&quot;==&quot;pose_twist_estimator&quot;')"/>
++    <let name="motion_publish_mode" value="full_motion" unless="$(eval '&quot;$(var localization_sim_mode)&quot;==&quot;pose_twist_estimator&quot;')"/>
++    <include file="$(find-pkg-share autoware_simple_planning_simulator)/launch/simple_planning_simulator.launch.py">
++      <arg name="vehicle_info_param_file" value="$(find-pkg-share $(var vehicle_model)_description)/config/vehicle_info.param.yaml"/>
++      <arg name="simulator_model_param_file" value="$(var simulator_model)"/>
++      <arg name="initial_engage_state" value="true"/>
++      <arg name="raw_vehicle_cmd_converter_param_path" value="$(find-pkg-share autoware_core)/config/vehicle/raw_vehicle_cmd_converter.param.yaml"/>
++      <arg name="motion_publish_mode" value="$(var motion_publish_mode)"/>
++    </include>
++
++    <!-- Dummy Perception -->
++    <arg name="perception/enable_detection_failure" default="true" description="enable to simulate detection failure when using dummy perception"/>
++    <arg name="perception/enable_object_recognition" default="false" description="enable object recognition"/>
++    <arg name="perception/use_base_link_z" default="true" description="dummy perception uses base_link z axis coordinate if it is true"/>
++    <arg name="sensing/visible_range" default="300.0" description="visible range when using dummy perception"/>
++    <include file="$(find-pkg-share autoware_dummy_perception_publisher)/launch/dummy_perception_publisher.launch.xml">
++      <arg name="real" value="$(var perception/enable_detection_failure)"/>
++      <arg name="use_object_recognition" value="$(var perception/enable_object_recognition)"/>
++      <arg name="use_base_link_z" value="$(var perception/use_base_link_z)"/>
++      <arg name="visible_range" value="$(var sensing/visible_range)"/>
++    </include>
++
++    <!-- publish empty objects instead of object recognition module -->
++    <group unless="$(var perception/enable_object_recognition)">
++      <push-ros-namespace namespace="object_recognition"/>
++      <node pkg="autoware_dummy_perception_publisher" exec="empty_objects_publisher" name="empty_objects_publisher" output="screen">
++        <remap from="~/output/objects" to="/perception/object_recognition/objects"/>
++      </node>
++    </group>
++  </group>
++
+   <!-- Tools -->
+   <group>
+     <node pkg="rviz2" exec="rviz2" name="rviz2" output="screen" args="-d $(find-pkg-share autoware_core)/rviz/autoware_core.rviz"/>
+diff --git a/localization/autoware_core_localization/launch/autoware_core_localization.launch.xml b/localization/autoware_core_localization/launch/autoware_core_localization.launch.xml
+index a28f2fc1..e7a8fd88 100644
+--- a/localization/autoware_core_localization/launch/autoware_core_localization.launch.xml
++++ b/localization/autoware_core_localization/launch/autoware_core_localization.launch.xml
+@@ -1,82 +1,109 @@
+ <launch>
++  <arg name="is_planning_simulation" description="enable planning simulation if true"/>
+   <arg name="gnss_input_topic" default="/sensing/gnss/pose_with_covariance"/>
+-  <arg name="lidar_input_topic" default="/sensing/lidar/top/pointcloud_raw_ex"/>
++  <!-- <arg name="lidar_input_topic" default="/sensing/lidar/top/pointcloud_raw_ex"/> -->
++  <arg name="lidar_input_topic" default="/sensing/lidar/top/concatenated/pointcloud"/>
+   <arg name="vehicle_twist_input_topic" default="/sensing/vehicle_velocity_converter/twist_with_covariance"/>
+ 
+-  <arg name="ekf_localizer_param_path" default="$(find-pkg-share autoware_core_localization)/config/ekf_localizer.param.yaml"/>
+-  <arg name="stop_filter_param_path" default="$(find-pkg-share autoware_core_localization)/config/stop_filter.param.yaml"/>
+-  <arg name="twist2accel_param_path" default="$(find-pkg-share autoware_core_localization)/config/twist2accel.param.yaml"/>
++  <arg name="ekf_localizer_param_path" default="$(find-pkg-share autoware_ekf_localizer)/config/ekf_localizer.param.yaml"/>
++  <arg name="stop_filter_param_path" default="$(find-pkg-share autoware_stop_filter)/config/stop_filter.param.yaml"/>
++  <arg name="twist2accel_param_path" default="$(find-pkg-share autoware_twist2accel)/config/twist2accel.param.yaml"/>
+   <arg name="pose_initializer_param_path" default="$(find-pkg-share autoware_core_localization)/config/pose_initializer.param.yaml"/>
+-  <arg name="voxel_grid_downsample_filter_param_file" default="$(find-pkg-share autoware_core_localization)/config/voxel_grid_downsample_filter.param.yaml"/>
+-  <arg name="ndt_scan_matcher_param_path" default="$(find-pkg-share autoware_core_localization)/config/ndt_scan_matcher.param.yaml"/>
++  <arg name="voxel_grid_downsample_filter_param_file" default="$(find-pkg-share autoware_downsample_filters)/config/voxel_grid_downsample_filter_node.param.yaml"/>
++  <arg name="ndt_scan_matcher_param_path" default="$(find-pkg-share autoware_ndt_scan_matcher)/config/ndt_scan_matcher.param.yaml"/>
+ 
+   <group>
+     <push-ros-namespace namespace="localization"/>
+-    <group>
+-      <push-ros-namespace namespace="pose_estimator"/>
+-      <node pkg="autoware_downsample_filters" exec="voxel_grid_downsample_filter_node" name="voxel_grid_downsample_filter_node">
+-        <param from="$(var voxel_grid_downsample_filter_param_file)"/>
+-        <remap from="input" to="$(var lidar_input_topic)"/>
+-        <remap from="output" to="/localization/util/downsample/pointcloud"/>
+-      </node>
++    <group unless="$(var is_planning_simulation)">
++      <group>
++        <push-ros-namespace namespace="pose_estimator"/>
++        <node pkg="autoware_downsample_filters" exec="voxel_grid_downsample_filter_node" name="voxel_grid_downsample_filter_node">
++          <param from="$(var voxel_grid_downsample_filter_param_file)"/>
++          <remap from="input" to="$(var lidar_input_topic)"/>
++          <remap from="output" to="/localization/util/downsample/pointcloud"/>
++        </node>
+ 
+-      <include file="$(find-pkg-share autoware_ndt_scan_matcher)/launch/ndt_scan_matcher.launch.xml">
+-        <arg name="input_pointcloud" value="/localization/util/downsample/pointcloud"/>
+-        <arg name="input_initial_pose_topic" value="/localization/pose_twist_fusion_filter/biased_pose_with_covariance"/>
+-        <arg name="input_regularization_pose_topic" value="/sensing/gnss/pose_with_covariance"/>
+-        <arg name="input_service_trigger_node" value="/localization/pose_estimator/trigger_node"/>
++        <include file="$(find-pkg-share autoware_ndt_scan_matcher)/launch/ndt_scan_matcher.launch.xml">
++          <arg name="input_pointcloud" value="/localization/util/downsample/pointcloud"/>
++          <arg name="input_initial_pose_topic" value="/localization/pose_twist_fusion_filter/biased_pose_with_covariance"/>
++          <arg name="input_regularization_pose_topic" value="/sensing/gnss/pose_with_covariance"/>
++          <arg name="input_service_trigger_node" value="/localization/pose_estimator/trigger_node"/>
+ 
+-        <arg name="output_pose_topic" value="/localization/pose_estimator/pose"/>
+-        <arg name="output_pose_with_covariance_topic" value="/localization/pose_estimator/pose_with_covariance"/>
+-        <arg name="client_map_loader" value="/map/get_differential_pointcloud_map"/>
+-        <arg name="param_file" value="$(var ndt_scan_matcher_param_path)"/>
+-      </include>
+-    </group>
++          <arg name="output_pose_topic" value="/localization/pose_estimator/pose"/>
++          <arg name="output_pose_with_covariance_topic" value="/localization/pose_estimator/pose_with_covariance"/>
++          <arg name="client_map_loader" value="/map/get_differential_pointcloud_map"/>
++          <arg name="param_file" value="$(var ndt_scan_matcher_param_path)"/>
++        </include>
++      </group>
+ 
+-    <group>
+-      <push-ros-namespace namespace="twist_estimator"/>
+-      <!-- place holder for twist_estimator-->
+-      <node pkg="topic_tools" exec="relay" name="twist_estimator_relay" output="log">
+-        <param name="input_topic" value="$(var vehicle_twist_input_topic)"/>
+-        <param name="output_topic" value="/localization/twist_estimator/twist_with_covariance"/>
+-        <param name="type" value="geometry_msgs/msg/TwistWithCovarianceStamped"/>
+-        <param name="reliability" value="reliable"/>
+-      </node>
+-    </group>
++      <group>
++        <push-ros-namespace namespace="twist_estimator"/>
++        <node pkg="topic_tools" exec="relay" name="twist_estimator_relay" output="log">
++          <param name="input_topic" value="$(var vehicle_twist_input_topic)"/>
++          <param name="output_topic" value="/localization/twist_estimator/twist_with_covariance"/>
++          <param name="type" value="geometry_msgs/msg/TwistWithCovarianceStamped"/>
++          <param name="reliability" value="reliable"/>
++        </node>
++
++        <include file="$(find-pkg-share autoware_gyro_odometer)/launch/gyro_odometer.launch.xml">
++          <arg name="input_vehicle_twist_with_covariance_topic" value="/sensing/vehicle_velocity_converter/twist_with_covariance"/>
++          <arg name="output_twist_with_covariance_topic" value="/localization/twist_estimator/twist_with_covariance"/>
++          <arg name="output_twist_with_covariance_raw_topic" value="/localization/twist_estimator/twist_with_covariance_raw"/>
++        </include>
++      </group>
+ 
+-    <group>
+-      <push-ros-namespace namespace="pose_twist_fusion_filter"/>
+-      <include file="$(find-pkg-share autoware_ekf_localizer)/launch/ekf_localizer.launch.xml">
+-        <arg name="input_initial_pose_name" value="/initialpose3d"/>
+-        <arg name="input_pose_with_cov_name" value="/localization/pose_estimator/pose_with_covariance"/>
+-        <arg name="input_twist_with_cov_name" value="/localization/twist_estimator/twist_with_covariance"/>
+-        <arg name="output_odom_name" value="/localization/kinematic_state"/>
+-        <arg name="output_pose_name" value="pose"/>
+-        <arg name="output_pose_with_covariance_name" value="/localization/pose_with_covariance"/>
+-        <arg name="output_biased_pose_name" value="biased_pose"/>
+-        <arg name="output_biased_pose_with_covariance_name" value="biased_pose_with_covariance"/>
+-        <arg name="output_twist_name" value="twist"/>
+-        <arg name="output_twist_with_covariance_name" value="twist_with_covariance"/>
+-        <arg name="param_file" value="$(var ekf_localizer_param_path)"/>
+-      </include>
++      <group>
++        <push-ros-namespace namespace="pose_twist_fusion_filter"/>
++        <include file="$(find-pkg-share autoware_ekf_localizer)/launch/ekf_localizer.launch.xml">
++          <arg name="input_initial_pose_name" value="/initialpose3d"/>
++          <arg name="input_pose_with_cov_name" value="/localization/pose_estimator/pose_with_covariance"/>
++          <arg name="input_twist_with_cov_name" value="/localization/twist_estimator/twist_with_covariance"/>
++          <arg name="output_odom_name" value="/localization/kinematic_state"/>
++          <arg name="output_pose_name" value="pose"/>
++          <arg name="output_pose_with_covariance_name" value="/localization/pose_with_covariance"/>
++          <arg name="output_biased_pose_name" value="biased_pose"/>
++          <arg name="output_biased_pose_with_covariance_name" value="biased_pose_with_covariance"/>
++          <arg name="output_twist_name" value="twist"/>
++          <arg name="output_twist_with_covariance_name" value="twist_with_covariance"/>
++          <arg name="param_file" value="$(var ekf_localizer_param_path)"/>
++        </include>
+ 
+-      <include file="$(find-pkg-share autoware_stop_filter)/launch/stop_filter.launch.xml">
+-        <arg name="use_twist_with_covariance" value="True"/>
+-        <arg name="input_odom_name" value="/localization/pose_twist_fusion_filter/kinematic_state"/>
+-        <arg name="input_twist_with_covariance_name" value="/localization/pose_twist_fusion_filter/twist_with_covariance"/>
+-        <arg name="output_odom_name" value="/localization/kinematic_state"/>
+-        <arg name="param_path" value="$(var stop_filter_param_path)"/>
+-      </include>
++        <include file="$(find-pkg-share autoware_stop_filter)/launch/stop_filter.launch.xml">
++          <arg name="use_twist_with_covariance" value="True"/>
++          <arg name="input_odom_name" value="/localization/pose_twist_fusion_filter/kinematic_state"/>
++          <arg name="input_twist_with_covariance_name" value="/localization/pose_twist_fusion_filter/twist_with_covariance"/>
++          <arg name="output_odom_name" value="/localization/kinematic_state"/>
++          <arg name="param_path" value="$(var stop_filter_param_path)"/>
++        </include>
+ 
+-      <include file="$(find-pkg-share autoware_twist2accel)/launch/twist2accel.launch.xml">
+-        <arg name="in_odom" value="/localization/kinematic_state"/>
+-        <arg name="in_twist" value="/localization/twist_estimator/twist_with_covariance"/>
+-        <arg name="out_accel" value="/localization/acceleration"/>
+-        <arg name="param_file" value="$(var twist2accel_param_path)"/>
+-      </include>
++        <include file="$(find-pkg-share autoware_twist2accel)/launch/twist2accel.launch.xml">
++          <arg name="in_odom" value="/localization/kinematic_state"/>
++          <arg name="in_twist" value="/localization/twist_estimator/twist_with_covariance"/>
++          <arg name="out_accel" value="/localization/acceleration"/>
++          <arg name="param_file" value="$(var twist2accel_param_path)"/>
++        </include>
++      </group>
++    </group>
++
++    <group unless="$(var is_planning_simulation)">
++      <push-ros-namespace namespace="util"/>
++      <node pkg="autoware_pose_initializer" exec="autoware_pose_initializer_node" output="both">
++        <param from="$(var pose_initializer_param_path)"/>
++        <remap from="ndt_align" to="/localization/pose_estimator/ndt_align_srv"/>
++        <remap from="stop_check_twist" to="$(var vehicle_twist_input_topic)"/>
++        <remap from="gnss_pose_cov" to="$(var gnss_input_topic)"/>
++        <remap from="pose_reset" to="/initialpose3d"/>
++        <remap from="ekf_trigger_node" to="/localization/pose_twist_fusion_filter/trigger_node"/>
++        <remap from="ndt_trigger_node" to="/localization/pose_estimator/trigger_node"/>
++        <param name="map_height_fitter.map_loader_name" value="/map/pointcloud_map_loader"/>
++        <param name="map_height_fitter.target" value="pointcloud_map"/>
++        <remap from="~/pointcloud_map" to="/map/pointcloud_map"/>
++        <remap from="~/partial_map_load" to="/map/get_partial_pointcloud_map"/>
++        <remap from="~/vector_map" to="/map/vector_map"/>
++      </node>
+     </group>
+ 
+-    <group>
++    <group if="$(var is_planning_simulation)">
+       <push-ros-namespace namespace="util"/>
+       <node pkg="autoware_pose_initializer" exec="autoware_pose_initializer_node" output="both">
+         <param from="$(var pose_initializer_param_path)"/>
+@@ -88,6 +115,11 @@
+         <remap from="ndt_trigger_node" to="/localization/pose_estimator/trigger_node"/>
+         <param name="map_height_fitter.map_loader_name" value="/map/pointcloud_map_loader"/>
+         <param name="map_height_fitter.target" value="pointcloud_map"/>
++        <param name="ekf_enabled" value="false"/>
++        <param name="gnss_enabled" value="false"/>
++        <param name="yabloc_enabled" value="false"/>
++        <param name="ndt_enabled" value="false"/>
++        <param name="stop_check_enabled" value="false"/>
+         <remap from="~/pointcloud_map" to="/map/pointcloud_map"/>
+         <remap from="~/partial_map_load" to="/map/get_partial_pointcloud_map"/>
+         <remap from="~/vector_map" to="/map/vector_map"/>
+diff --git a/sensing/autoware_core_sensing/launch/autoware_core_sensing.launch.xml b/sensing/autoware_core_sensing/launch/autoware_core_sensing.launch.xml
+index ed24293c..d585689c 100644
+--- a/sensing/autoware_core_sensing/launch/autoware_core_sensing.launch.xml
++++ b/sensing/autoware_core_sensing/launch/autoware_core_sensing.launch.xml
+@@ -1,9 +1,21 @@
+ <launch>
++  <arg name="is_planning_simulation" description="enable planning simulation if true"/>
++  <arg name="sensor_model" default="sample_sensor_kit" description="sensor model name"/>
++  <arg name="pointcloud_container_name" default="pointcloud_container"/>
++
+   <group>
+     <push-ros-namespace namespace="sensing"/>
+     <include file="$(find-pkg-share autoware_vehicle_velocity_converter)/launch/vehicle_velocity_converter.launch.xml">
+       <arg name="input_vehicle_velocity_topic" value="/vehicle/status/velocity_status"/>
+       <arg name="output_twist_with_covariance" value="/sensing/vehicle_velocity_converter/twist_with_covariance"/>
+     </include>
++
++    <!-- Driver -->
++    <group unless="$(var is_planning_simulation)">
++      <let name="sensor_launch_pkg" value="$(find-pkg-share $(var sensor_model)_launch)"/>
++      <include file="$(var sensor_launch_pkg)/launch/sensing.launch.xml">
++        <arg name="pointcloud_container_name" value="$(var pointcloud_container_name)"/>
++      </include>
++    </group>
+   </group>
+-</launch>
++</launch>
+\ No newline at end of file
+diff --git a/vehicle/autoware_core_vehicle/launch/autoware_core_vehicle.launch.xml b/vehicle/autoware_core_vehicle/launch/autoware_core_vehicle.launch.xml
+index 1b9b40ad..d72d3681 100644
+--- a/vehicle/autoware_core_vehicle/launch/autoware_core_vehicle.launch.xml
++++ b/vehicle/autoware_core_vehicle/launch/autoware_core_vehicle.launch.xml
+@@ -1,5 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <launch>
++  <arg name="is_planning_simulation" description="enable planning simulation if true"/>
+   <arg name="vehicle_model" description="vehicle model name"/>
+   <arg name="sensor_model" description="sensor model name"/>
+   <arg name="config_dir" default="$(find-pkg-share $(var sensor_model)_description)/config" description="path to dir where sensors_calibration.yaml, etc. are located"/>
+@@ -11,4 +12,10 @@
+       <param name="robot_description" value="$(command 'xacro $(var model_file) vehicle_model:=$(var vehicle_model) sensor_model:=$(var sensor_model) config_dir:=$(var config_dir)' 'warn')"/>
+     </node>
+   </group>
+-</launch>
++
++  <group unless="$(var is_planning_simulation)">
++    <let name="vehicle_launch_pkg" value="$(find-pkg-share $(var vehicle_model)_launch)"/>
++    <include file="$(var vehicle_launch_pkg)/launch/vehicle_interface.launch.xml">
++    </include>
++  </group>
++</launch>
+\ No newline at end of file
