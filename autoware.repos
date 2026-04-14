@@ -40,3 +40,9 @@ repositories:
     type: git
     url:  git@github.com:tier4/autoware_ros2_whill_adapter.git
     version: upstream/autoware/latest
+
+  # sensor_component (for using imu_description)
+  sensor_component/external/sensor_component_description:
+    type: git
+    url: https://github.com/tier4/sensor_component_description.git
+    version: 03ba094851ec90febfcfc0adb20b64b0e19df7a8
