@@ -16,6 +16,14 @@ repositories:
     type: git
     url: https://github.com/autowarefoundation/autoware_simple_planning_simulator.git
     version: separate-planning-simulator-dependency-from-autoware-universe
+  autoware/autoware_cmake:
+    type: git
+    url: https://github.com/autowarefoundation/autoware_cmake.git
+    version: 1.2.0
+  core/autoware_rviz_plugins:
+    type: git
+    url: https://github.com/autowarefoundation/autoware_rviz_plugins.git
+    version: 0.5.0
   vendor/tamagawa_imu_driver:
     type: git
     url: https://github.com/tier4/tamagawa_imu_driver.git
